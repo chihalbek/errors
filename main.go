@@ -12,10 +12,10 @@ import (
 )
 
 var (
-	ErrInvalidURL       = errors.New("неверный url")
-	ErrConnectionFailed = errors.New("ошибка подсключения")
-	ErrDownloadFailed   = errors.New("ошибка. проверьте доступность файла для скачивания")
-	ErrFileNotFound     = errors.New("файл не найден")
+	ErrInvalidURL       = errors.New("invalid url")
+	ErrConnectionFailed = errors.New("connection error")
+	ErrDownloadFailed   = errors.New("file upload failed")
+	ErrFileNotFound     = errors.New("file not found")
 )
 
 func downloadFile(inputUrl, filename string) error {
@@ -42,10 +42,16 @@ func downloadFile(inputUrl, filename string) error {
 	if err != nil {
 		return err
 	}
+	defer func(file *os.File) {
+		errC := file.Close()
+		if err == nil {
+			err = errC
+		}
+	}(file)
 
 	_, err = io.Copy(file, resp.Body)
 	if err != nil {
-		return ErrDownloadFailed
+		return fmt.Errorf("failed to copy file", ErrDownloadFailed)
 	}
 	return nil
 }
@@ -60,13 +66,13 @@ func main() {
 	if err != nil {
 		switch {
 		case errors.Is(err, ErrInvalidURL):
-			fmt.Println("неверный url")
+			fmt.Println("invalid URL. please, enter correct address.")
 		case errors.Is(err, ErrConnectionFailed):
-			fmt.Println("ошибка подсключения")
+			fmt.Println("connection error. try again or check your connection.")
 		case errors.Is(err, ErrDownloadFailed):
-			fmt.Println("ошибка. проверьте доступность файла для скачивания")
+			fmt.Println("file upload failed. check if the file is available for downloading.")
 		case errors.Is(err, ErrFileNotFound):
-			fmt.Println("файл не найден")
+			fmt.Println("file not found. check if the URL is correct or if the file is on the server.")
 		}
 		return
 	}
