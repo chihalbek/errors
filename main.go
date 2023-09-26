@@ -51,7 +51,7 @@ func downloadFile(inputUrl, filename string) error {
 
 	_, err = io.Copy(file, resp.Body)
 	if err != nil {
-		return fmt.Errorf("failed to copy file %s", ErrDownloadFailed)
+		return fmt.Errorf("failed to copy file %w", ErrDownloadFailed)
 	}
 	return nil
 }
@@ -66,13 +66,13 @@ func main() {
 	if err != nil {
 		switch {
 		case errors.Is(err, ErrInvalidURL):
-			fmt.Println("invalid URL. please, enter correct address.")
+			fmt.Println("Invalid URL. Please, enter correct address.")
 		case errors.Is(err, ErrConnectionFailed):
-			fmt.Println("connection error. try again or check your connection.")
+			fmt.Println("Connection error. Try again or check your connection.")
 		case errors.Is(err, ErrDownloadFailed):
-			fmt.Println("file upload failed. check if the file is available for downloading.")
+			fmt.Println("File upload failed. Check if the file is available for downloading.")
 		case errors.Is(err, ErrFileNotFound):
-			fmt.Println("file not found. check if the URL is correct or if the file is on the server.")
+			fmt.Println("File not found. Check if the URL is correct or if the file is on the server.")
 		}
 		return
 	}
