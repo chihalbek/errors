@@ -51,7 +51,7 @@ func downloadFile(inputUrl, filename string) error {
 
 	_, err = io.Copy(file, resp.Body)
 	if err != nil {
-		return fmt.Errorf("failed to copy file", ErrDownloadFailed)
+		return fmt.Errorf("failed to copy file %s", ErrDownloadFailed)
 	}
 	return nil
 }
